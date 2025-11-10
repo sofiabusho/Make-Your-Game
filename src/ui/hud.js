@@ -21,6 +21,27 @@ export function createHudSystem({
     getLives,
     getHighScore,
 }) {
+    const ACTIVE_HEART = '❤️';
+    const LOST_HEART = '🖤';
+
+    function updateHearts(container) {
+        if (!container) return;
+
+        const hearts = container.querySelectorAll('.heart');
+        hearts.forEach((heart, index) => {
+            const isActive = index < getLives();
+            heart.textContent = isActive ? ACTIVE_HEART : LOST_HEART;
+
+            if (isActive) {
+                heart.classList.add('active');
+                heart.classList.remove('lost');
+            } else {
+                heart.classList.remove('active');
+                heart.classList.add('lost');
+            }
+        });
+    }
+
     function updateHud() {
         if (hudTime) hudTime.textContent = getTimeLeft().toFixed(1);
         if (hudScore) hudScore.textContent = String(getScore());
@@ -35,18 +56,7 @@ export function createHudSystem({
             }
         }
 
-        if (hudLives) {
-            const hearts = hudLives.querySelectorAll('.heart');
-            hearts.forEach((heart, index) => {
-                if (index < getLives()) {
-                    heart.classList.add('active');
-                    heart.classList.remove('lost');
-                } else {
-                    heart.classList.remove('active');
-                    heart.classList.add('lost');
-                }
-            });
-        }
+        updateHearts(hudLives);
 
         const hudHighScore = documentRef.getElementById('hud-highscore');
         if (hudHighScore) hudHighScore.textContent = String(getHighScore());
@@ -58,18 +68,7 @@ export function createHudSystem({
         if (menuFps) menuFps.textContent = getFps().toFixed(1);
         if (menuLevel) menuLevel.textContent = String(getLevel());
 
-        if (menuLives) {
-            const hearts = menuLives.querySelectorAll('.heart');
-            hearts.forEach((heart, index) => {
-                if (index < getLives()) {
-                    heart.classList.add('active');
-                    heart.classList.remove('lost');
-                } else {
-                    heart.classList.remove('active');
-                    heart.classList.add('lost');
-                }
-            });
-        }
+        updateHearts(menuLives);
     }
 
     return { updateHud, updateMenu };
