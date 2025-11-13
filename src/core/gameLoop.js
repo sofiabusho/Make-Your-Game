@@ -31,6 +31,7 @@ export function createGameLoop({
     state,
     rand,
     storyManager,
+    loadMapForLevel,
 }) {
     /**
      * Main update routine.
@@ -93,9 +94,14 @@ export function createGameLoop({
         if (timeLeft <= 0) {
             if (state.getLevel() < constants.maxLevel) {
                 // Advance to next level
-                state.setLevel(state.getLevel() + 1);
+                const newLevel = state.getLevel() + 1;
+                state.setLevel(newLevel);
                 state.setTimeLeft(constants.levelDuration);
                 state.setLevelTimer(constants.levelDuration);
+                // Load new tilemap for the level
+                if (typeof loadMapForLevel === 'function') {
+                    loadMapForLevel(newLevel);
+                }
                 lifeFishManager.resetForNewLevel();
                 turtleManager.resetForNewLevel();
                 feedback.showCenterNotification(`LEVEL ${state.getLevel()}`, 'level-up', 2000);

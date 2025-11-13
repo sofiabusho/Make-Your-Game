@@ -33,6 +33,9 @@ import { createMenuEffects } from './src/ui/menuEffects.js';
 import { createFeedbackSystem } from './src/ui/feedback.js';
 import { getStoryManager } from './src/story/story.js';
 
+import { createTilemapSystem } from './src/world/tilemap.js';
+import { ALL_MAPS, getMapById } from './src/world/mapData.js';
+
 function bootstrapGame() {
   'use strict';
 
@@ -42,6 +45,7 @@ function bootstrapGame() {
   const entitiesLayer = document.getElementById('entities');
   const bubblesLayer = document.getElementById('bubbles-layer');
   const plantsLayer = document.getElementById('plants-layer');
+  const tilemapLayer = document.getElementById('tilemap-layer');
   const crosshair = document.getElementById('crosshair');
 
   // HUD
@@ -266,6 +270,30 @@ function bootstrapGame() {
   const lifeFishManager = new LifeFishManager();
   const turtleManager = new TurtleManager();
 
+  // Tilemap system
+  const tilemapSystem = createTilemapSystem({
+    world: WORLD,
+    container: tilemapLayer,
+  });
+
+  // Load initial map (changes based on level)
+  let currentMapIndex = 0;
+
+  /**
+   * Loads a tilemap based on the current level
+   * Cycles through available maps every few levels
+   */
+  function loadMapForLevel(levelNum) {
+    // Cycle through maps every 3 levels
+    const mapIndex = Math.floor((levelNum - 1) / 3) % ALL_MAPS.length;
+    if (mapIndex !== currentMapIndex) {
+      currentMapIndex = mapIndex;
+      const map = ALL_MAPS[mapIndex];
+      tilemapSystem.loadMap(map);
+      console.log(`[Tilemap] Loaded map: ${map.name} for level ${levelNum}`);
+    }
+  }
+
   // Settings handlers
   const {
     loadSettings,
@@ -403,6 +431,7 @@ function bootstrapGame() {
     entitiesLayer,
     bubblesLayer,
     world: WORLD,
+    loadMapForLevel,
     constants: {
       maxLevel: MAX_LEVEL,
       levelDuration: LEVEL_DURATION,
@@ -470,6 +499,7 @@ function bootstrapGame() {
     requestFrame: window.requestAnimationFrame.bind(window),
     frame,
     storyManager,
+    loadMapForLevel,
     constants: {
       gameDuration: GAME_DURATION_S,
       maxLives: MAX_LIVES,

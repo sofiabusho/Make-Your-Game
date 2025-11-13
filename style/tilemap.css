@@ -1,0 +1,155 @@
+/**
+ * Tilemap Styles
+ *
+ * Visual styling for different tile types.
+ * These can be replaced with background-position rules when using a tileset image.
+ */
+
+/* Base tile styling */
+.tile {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+/* Tile Type 1: Light Water */
+.tile-water-light {
+  background: linear-gradient(135deg,
+    rgba(100, 200, 255, 0.3) 0%,
+    rgba(150, 220, 255, 0.2) 100%);
+}
+
+/* Tile Type 2: Dark Water */
+.tile-water-dark {
+  background: linear-gradient(135deg,
+    rgba(30, 80, 150, 0.5) 0%,
+    rgba(40, 100, 180, 0.4) 100%);
+}
+
+/* Tile Type 3: Sand */
+.tile-sand {
+  background: linear-gradient(135deg,
+    #f4d190 0%,
+    #e8c070 50%,
+    #d4a860 100%);
+  border-top: 1px solid rgba(255, 230, 150, 0.5);
+}
+
+/* Tile Type 4: Rock */
+.tile-rock {
+  background: linear-gradient(135deg,
+    #6b7280 0%,
+    #4b5563 50%,
+    #374151 100%);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Tile Type 5: Coral (Orange) */
+.tile-coral {
+  background: radial-gradient(circle at 30% 30%,
+    #ff8c42 0%,
+    #ff6b35 40%,
+    #d94a1a 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Tile Type 6: Seaweed */
+.tile-seaweed {
+  background: linear-gradient(180deg,
+    rgba(34, 139, 34, 0.4) 0%,
+    rgba(46, 125, 50, 0.6) 50%,
+    rgba(27, 94, 32, 0.8) 100%);
+  border-left: 2px solid rgba(76, 175, 80, 0.6);
+  border-right: 2px solid rgba(76, 175, 80, 0.4);
+}
+
+/* Tile Type 7: Dark Rock */
+.tile-rock-dark {
+  background: linear-gradient(135deg,
+    #3f3f3f 0%,
+    #2d2d2d 50%,
+    #1a1a1a 100%);
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Tile Type 8: Dark Sand */
+.tile-sand-dark {
+  background: linear-gradient(135deg,
+    #a89968 0%,
+    #8a7a50 50%,
+    #6b5d3f 100%);
+  border-top: 1px solid rgba(150, 130, 80, 0.4);
+}
+
+/* Tile Type 9: Coral (Pink) */
+.tile-coral-pink {
+  background: radial-gradient(circle at 30% 30%,
+    #ff6b9d 0%,
+    #f06292 40%,
+    #e91e63 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Tile Type 10: Bubble Area */
+.tile-bubble {
+  background: radial-gradient(circle at 50% 50%,
+    rgba(200, 230, 255, 0.3) 0%,
+    rgba(150, 200, 255, 0.15) 60%,
+    rgba(100, 180, 255, 0.05) 100%);
+  animation: bubble-float 3s ease-in-out infinite;
+}
+
+@keyframes bubble-float {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 0.8;
+  }
+}
+
+/* Default tile (fallback) */
+.tile-default {
+  background: rgba(100, 100, 100, 0.3);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+/* Tilemap container */
+#tilemap-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Performance optimization for tiles */
+.tile {
+  will-change: opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Optional: Tile hover effect for debugging */
+.tile:hover {
+  outline: 1px solid rgba(255, 255, 0, 0.5);
+}
+
+/**
+ * Tileset image approach (uncomment when using actual tileset image)
+ */
+/*
+.tile {
+  background-image: url('/style/images/tileset.png');
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+*/

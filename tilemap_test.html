@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tilemap System Test</title>
+  <link rel="stylesheet" href="./style/tilemap.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(to bottom, #1a5f7a, #002a3a);
+      color: #fff;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #4fc3f7;
+    }
+    .controls {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      background: #4fc3f7;
+      border: none;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: #6fd4ff;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    .info {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    #map-container {
+      position: relative;
+      width: 100%;
+      max-width: 1024px;
+      height: 768px;
+      margin: 0 auto;
+      background: linear-gradient(to bottom, #64b5f6, #0d47a1);
+      border: 3px solid #4fc3f7;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #tilemap-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px;
+      border-radius: 5px;
+    }
+    .legend-tile {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐠 Tilemap Engine Test 🐠</h1>
+
+    <div class="controls">
+      <button id="map1">Shallow Reef</button>
+      <button id="map2">Deep Cavern</button>
+      <button id="map3">Coral Garden</button>
+      <button id="map4">Open Ocean</button>
+      <button id="clear">Clear Map</button>
+      <span style="margin-left: auto; color: #4fc3f7;">
+        Current Map: <strong id="current-map">None</strong>
+      </span>
+    </div>
+
+    <div class="info">
+      <strong>Instructions:</strong> Click the buttons above to load different tile maps.
+      Each map represents a different underwater environment with unique tile patterns.
+      The tilemap engine efficiently renders tiles using CSS-based styling.
+    </div>
+
+    <div id="map-container">
+      <div id="tilemap-layer"></div>
+    </div>
+
+    <div class="info">
+      <strong>Tile Legend:</strong>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-tile tile-water-light"></div>
+          <span>Light Water</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-water-dark"></div>
+          <span>Dark Water</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-sand"></div>
+          <span>Sand</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-rock"></div>
+          <span>Rock</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-coral"></div>
+          <span>Coral (Orange)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-seaweed"></div>
+          <span>Seaweed</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-rock-dark"></div>
+          <span>Dark Rock</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-sand-dark"></div>
+          <span>Dark Sand</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-coral-pink"></div>
+          <span>Coral (Pink)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-tile tile-bubble"></div>
+          <span>Bubble Area</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info" style="margin-top: 20px;">
+      <strong>Technical Details:</strong>
+      <div id="stats" style="margin-top: 10px; font-family: monospace;">
+        Tiles Rendered: <span id="tile-count">0</span><br>
+        Map Size: <span id="map-size">0x0</span><br>
+        Tile Size: <span id="tile-size">64px</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createTilemapSystem } from './src/world/tilemap.js';
+    import { SHALLOW_REEF, DEEP_CAVERN, CORAL_GARDEN, OPEN_OCEAN } from './src/world/mapData.js';
+
+    // Setup
+    const container = document.getElementById('tilemap-layer');
+    const currentMapLabel = document.getElementById('current-map');
+    const tileCountLabel = document.getElementById('tile-count');
+    const mapSizeLabel = document.getElementById('map-size');
+    const tileSizeLabel = document.getElementById('tile-size');
+
+    const WORLD = {
+      width: document.getElementById('map-container').clientWidth,
+      height: document.getElementById('map-container').clientHeight
+    };
+
+    const tilemapSystem = createTilemapSystem({
+      world: WORLD,
+      container: container
+    });
+
+    function updateStats(map) {
+      if (!map) {
+        tileCountLabel.textContent = '0';
+        mapSizeLabel.textContent = '0x0';
+        return;
+      }
+
+      const tiles = container.querySelectorAll('.tile');
+      tileCountLabel.textContent = tiles.length;
+      mapSizeLabel.textContent = `${map.columns}x${map.rows}`;
+      tileSizeLabel.textContent = `${map.tileSize}px`;
+    }
+
+    function loadMap(map) {
+      tilemapSystem.loadMap(map);
+      currentMapLabel.textContent = map.name;
+      updateStats(map);
+      console.log(`[Tilemap Test] Loaded: ${map.name}`);
+      console.log(`  - Size: ${map.columns}x${map.rows}`);
+      console.log(`  - Total tiles: ${map.size}`);
+      console.log(`  - Rendered tiles: ${container.querySelectorAll('.tile').length}`);
+    }
+
+    // Button handlers
+    document.getElementById('map1').addEventListener('click', () => loadMap(SHALLOW_REEF));
+    document.getElementById('map2').addEventListener('click', () => loadMap(DEEP_CAVERN));
+    document.getElementById('map3').addEventListener('click', () => loadMap(CORAL_GARDEN));
+    document.getElementById('map4').addEventListener('click', () => loadMap(OPEN_OCEAN));
+    document.getElementById('clear').addEventListener('click', () => {
+      tilemapSystem.clearMap();
+      currentMapLabel.textContent = 'None';
+      updateStats(null);
+      console.log('[Tilemap Test] Map cleared');
+    });
+
+    // Auto-load first map
+    loadMap(SHALLOW_REEF);
+
+    // Cycle through maps automatically (demo mode)
+    const maps = [SHALLOW_REEF, DEEP_CAVERN, CORAL_GARDEN, OPEN_OCEAN];
+    let currentIndex = 0;
+
+    console.log('='.repeat(50));
+    console.log('Tilemap System Test Page Loaded');
+    console.log('='.repeat(50));
+    console.log('Available maps:', maps.map(m => m.name).join(', '));
+    console.log('Click buttons to switch between maps');
+    console.log('Check the console for tile rendering details');
+    console.log('='.repeat(50));
+  </script>
+</body>
+</html>

@@ -11,6 +11,8 @@
 
   <!-- Tailwind CSS (built from src/input.css → dist/styles.css) -->
   <link rel="stylesheet" href="./dist/styles.css" />
+  <!-- Tilemap CSS -->
+  <link rel="stylesheet" href="./style/tilemap.css" />
 </head>
 
 <body class="h-full m-0 overflow-hidden font-silkscreen bg-gradient-to-b from-cyan-900 to-indigo-900">
@@ -34,8 +36,11 @@
              class="absolute bottom-2.5 right-[68%] w-32 z-0 pointer-events-none" />
       </div>
 
+      <!-- Tilemap Layer -->
+      <div id="tilemap-layer" aria-hidden="true" class="absolute inset-0 z-[5] pointer-events-none"></div>
+
       <!-- Entities (fish, turtles, etc.) -->
-      <div id="entities" aria-hidden="true" class="absolute inset-0"></div>
+      <div id="entities" aria-hidden="true" class="absolute inset-0 z-[6]"></div>
 
       <!-- Coral Overlay -->
       <div id="coral-overlay" aria-hidden="true"
