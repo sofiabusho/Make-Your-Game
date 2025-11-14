@@ -100,32 +100,50 @@ export function createTilemapSystem({ world, container }) {
    * @param {number} tileSize - Size of each tile
    */
   function applyTileStyle(el, tileIndex, tileSize) {
-    // For now, use CSS classes for different tile types
-    // Later this can be replaced with background-position for actual tileset image
+    // USE_BACKGROUND_IMAGE mode - cuts sections from background.jpeg
+    const USE_BACKGROUND_IMAGE = true;
 
-    const tileTypes = {
-      1: 'tile-water-light',
-      2: 'tile-water-dark',
-      3: 'tile-sand',
-      4: 'tile-rock',
-      5: 'tile-coral',
-      6: 'tile-seaweed',
-      7: 'tile-rock-dark',
-      8: 'tile-sand-dark',
-      9: 'tile-coral-pink',
-      10: 'tile-bubble'
-    };
+    if (USE_BACKGROUND_IMAGE) {
+      // Use your background image as a tileset
+      el.style.backgroundImage = 'url(/style/images/background.jpeg)';
+      el.style.backgroundRepeat = 'no-repeat';
 
-    const className = tileTypes[tileIndex] || 'tile-default';
-    el.classList.add(className);
+      // Define different positions in your background to use as tiles
+      // Adjust these X,Y positions to cut different parts of your background
+      const tilePositions = {
+        1: { x: 0, y: 0 },           // Top-left corner
+        2: { x: 200, y: 0 },         // Top area, offset right
+        3: { x: 0, y: 300 },         // Bottom-left (sandy area)
+        4: { x: 400, y: 200 },       // Middle-right (rocky area)
+        5: { x: 100, y: 100 },       // Coral area
+        6: { x: 300, y: 400 },       // Plant/seaweed area
+        7: { x: 500, y: 300 },       // Dark rock area
+        8: { x: 200, y: 500 },       // Dark sand
+        9: { x: 150, y: 200 },       // Pink coral
+        10: { x: 50, y: 50 }         // Bubble area
+      };
 
-    // If using a tileset image, uncomment and configure this:
-    // const tilesPerRow = 4; // Number of tiles per row in tileset
-    // const tilesetX = (tileIndex - 1) % tilesPerRow;
-    // const tilesetY = Math.floor((tileIndex - 1) / tilesPerRow);
-    // el.style.backgroundImage = 'url(/style/images/tileset.png)';
-    // el.style.backgroundPosition = `-${tilesetX * tileSize}px -${tilesetY * tileSize}px`;
-    // el.style.backgroundSize = `${tilesPerRow * tileSize}px auto`;
+      const pos = tilePositions[tileIndex] || { x: 0, y: 0 };
+      el.style.backgroundPosition = `-${pos.x}px -${pos.y}px`;
+      el.style.backgroundSize = 'auto'; // Keep original background size
+    } else {
+      // Original CSS gradient mode
+      const tileTypes = {
+        1: 'tile-water-light',
+        2: 'tile-water-dark',
+        3: 'tile-sand',
+        4: 'tile-rock',
+        5: 'tile-coral',
+        6: 'tile-seaweed',
+        7: 'tile-rock-dark',
+        8: 'tile-sand-dark',
+        9: 'tile-coral-pink',
+        10: 'tile-bubble'
+      };
+
+      const className = tileTypes[tileIndex] || 'tile-default';
+      el.classList.add(className);
+    }
   }
 
   /**
