@@ -29,6 +29,7 @@ export function createLifecycleSystem({
     constants,
     state,
     storyManager,
+    loadMapForLevel,
 }) {
     /** Show pause overlay with live stats */
     function showPauseMenu() {
@@ -80,6 +81,13 @@ export function createLifecycleSystem({
         state.setLastFrameTs(0);
         state.setLevel(1);
         state.setLevelTimer(constants.levelDuration);
+        // Load the tilemap for level 1
+
+        if (typeof loadMapForLevel === 'function') {
+
+            loadMapForLevel(1);
+
+        }
         state.setCombo(0);
         state.setMaxCombo(0);
         state.setComboTimer(0);

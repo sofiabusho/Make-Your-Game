@@ -7,49 +7,112 @@
 /* ==================== YOUR ORIGINAL ANIMATIONS =============== */
 /* ============================================================= */
 @keyframes ocean-wave {
-  0%   { background-position: 0% 0; }
-  100% { background-position: 500% 0; }
+    0% {
+        background-position: 0% 0;
+    }
+
+    100% {
+        background-position: 500% 0;
+    }
 }
+
 @keyframes notification-pulse {
-  0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-  50%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
+
 @keyframes bubbleFlood {
-  0%   { transform: translate(0,0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--dx), var(--dy)) scale(.5); opacity: 0; }
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--dx), var(--dy)) scale(.5);
+        opacity: 0;
+    }
 }
+
 @keyframes flashFade {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
+
 @keyframes miss-float {
-  0%   { transform: translate3d(-50%,-50%,0) scale(.8); opacity: 0; }
-  50%  { transform: translate3d(-50%,-60%,0) scale(1); opacity: 1; }
-  100% { transform: translate3d(-50%,-80%,0) scale(.8); opacity: 0; }
+    0% {
+        transform: translate3d(-50%, -50%, 0) scale(.8);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translate3d(-50%, -60%, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate3d(-50%, -80%, 0) scale(.8);
+        opacity: 0;
+    }
 }
+
 @keyframes story-fade-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ============================================================= */
 /* ==================== YOUR ORIGINAL UTILITIES =============== */
 /* ============================================================= */
 @layer utilities {
-  /* Center notification visibility toggle */
-  #center-notification.show { opacity: 1 !important; }
-  .sprite {
-    @apply absolute w-16 h-16;
-  }
-  .menu-bubble {
-    @apply absolute rounded-full;
-  }
-  .miss-feedback {
-    @apply absolute font-black text-3xl text-red-500 shadow-2xl pointer-events-none;
-  }
-  .animate-miss-float { animation: miss-float 1.5s ease-out forwards; }
-  .animate-story { animation: story-fade-in 0.8s ease-in-out; }
+
+    /* Center notification visibility toggle */
+    #center-notification.show {
+        opacity: 1 !important;
+    }
+
+    .sprite {
+        @apply absolute w-16 h-16;
+    }
+
+    .menu-bubble {
+        @apply absolute rounded-full;
+    }
+
+    .miss-feedback {
+        @apply absolute font-black text-3xl text-red-500 shadow-2xl pointer-events-none;
+    }
+
+    .animate-miss-float {
+        animation: miss-float 1.5s ease-out forwards;
+    }
+
+    .animate-story {
+        animation: story-fade-in 0.8s ease-in-out;
+    }
 }
 
 
@@ -57,94 +120,144 @@
 /* ==================== NEW GAME-SPECIFIC UTILITIES ============ */
 /* ============================================================= */
 @layer utilities {
-  /* ---------- BUBBLE FLOAT ---------- */
-  @keyframes bubbleFloat {
-    0%   { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.8; }
-    90%  { opacity: 0.8; }
-    100% { transform: translateY(-120vh) scale(1.2) rotate(720deg); opacity: 0; }
-  }
-  .animate-bubble {
-    animation: bubbleFloat linear forwards;
-  }
 
-  /* ---------- MISS POP-UP ---------- */
-  @keyframes missFloat {
-    to { transform: translateY(-60px) scale(1.2); opacity: 0; }
-  }
-  .animate-miss {
-    animation: missFloat 1.5s ease-out forwards;
-  }
+    /* ---------- BUBBLE FLOAT ---------- */
+    @keyframes bubbleFloat {
+        0% {
+            transform: translateY(0) scale(0.8) rotate(0deg);
+            opacity: 0;
+        }
 
-  /* ---------- HIT FLASH ---------- */
-  @keyframes hitFlash {
-    50% { filter: brightness(3) hue-rotate(300deg); }
-  }
-  .animate-hit {
-    animation: hitFlash 0.2s ease-in-out;
-  }
+        10% {
+            opacity: 0.8;
+        }
 
-  /* ---------- TURTLE SPLASH ---------- */
-  @keyframes splashExpand {
-    to { transform: scale(3) rotate(180deg); opacity: 0; }
-  }
-  .animate-splash {
-    animation: splashExpand 0.5s ease-out forwards;
-  }
+        90% {
+            opacity: 0.8;
+        }
 
-  /* ---------- PIXEL-ART CRISP ---------- */
-  .pixelated { image-rendering: pixelated; }
-
-  /* ---------- FISH SPRITE BACKGROUNDS ---------- */
-  .fish1 { background-image: url('/style/images/red.png'); }
-  .fish2 { background-image: url('/style/images/purple.png'); }
-  .fish3 { background-image: url('/style/images/yellow.png'); }
-  .fish4 { background-image: url('/style/images/green.png'); }
-  .fish5 { background-image: url('/style/images/blue.png'); }
-  .fish6 { background-image: url('/style/images/honey.png'); }
-  .fish7 { background-image: url('/style/images/brown.png'); }    
-
-  /* ---------- LIFE-FISH (NO EFFECTS) ---------- */
-  .lifeFish {
-    @apply w-20 h-16 bg-contain bg-center bg-no-repeat pixelated;
-    background-image: url('/style/images/extralife.png');
-  }
-
-  .turtle {
-    @apply w-40 h-32 bg-contain bg-center bg-no-repeat pixelated;
-    background-image: url('/style/images/turtle.png');
-  }
-
-  /* ---------- SCORE POPUP ---------- */
-  .score-popup {
-    @apply absolute font-bold text-2xl text-yellow-400 pointer-events-none z-50;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,0,0.5);
-    animation: scoreFloat 1s ease-out forwards;
-  }
-
-  @keyframes scoreFloat {
-    0% {
-      transform: translate(-50%, -50%) scale(0.8);
-      opacity: 0;
+        100% {
+            transform: translateY(-120vh) scale(1.2) rotate(720deg);
+            opacity: 0;
+        }
     }
-    20% {
-      transform: translate(-50%, -70%) scale(1.1);
-      opacity: 1;
+
+    .animate-bubble {
+        animation: bubbleFloat linear forwards;
     }
-    100% {
-      transform: translate(-50%, -120%) scale(1);
-      opacity: 0;
+
+    /* ---------- MISS POP-UP ---------- */
+    @keyframes missFloat {
+        to {
+            transform: translateY(-60px) scale(1.2);
+            opacity: 0;
+        }
     }
-  }
+
+    .animate-miss {
+        animation: missFloat 1.5s ease-out forwards;
+    }
+
+    /* ---------- HIT FLASH ---------- */
+    @keyframes hitFlash {
+        50% {
+            filter: brightness(3) hue-rotate(300deg);
+        }
+    }
+
+    .animate-hit {
+        animation: hitFlash 0.2s ease-in-out;
+    }
+
+    /* ---------- TURTLE SPLASH ---------- */
+    @keyframes splashExpand {
+        to {
+            transform: scale(3) rotate(180deg);
+            opacity: 0;
+        }
+    }
+
+    .animate-splash {
+        animation: splashExpand 0.5s ease-out forwards;
+    }
+
+    /* ---------- PIXEL-ART CRISP ---------- */
+    .pixelated {
+        image-rendering: pixelated;
+    }
+
+    /* ---------- FISH SPRITE BACKGROUNDS ---------- */
+    .fish1 {
+        background-image: url('/style/images/red.png');
+    }
+
+    .fish2 {
+        background-image: url('/style/images/purple.png');
+    }
+
+    .fish3 {
+        background-image: url('/style/images/yellow.png');
+    }
+
+    .fish4 {
+        background-image: url('/style/images/green.png');
+    }
+
+    .fish5 {
+        background-image: url('/style/images/blue.png');
+    }
+
+    .fish6 {
+        background-image: url('/style/images/honey.png');
+    }
+
+    .fish7 {
+        background-image: url('/style/images/brown.png');
+    }
+
+    /* ---------- LIFE-FISH (NO EFFECTS) ---------- */
+    .lifeFish {
+        @apply w-20 h-16 bg-contain bg-center bg-no-repeat pixelated;
+        background-image: url('/style/images/extralife.png');
+    }
+
+    .turtle {
+        @apply w-40 h-32 bg-contain bg-center bg-no-repeat pixelated;
+        background-image: url('/style/images/turtle.png');
+    }
+
+    /* ---------- SCORE POPUP ---------- */
+    .score-popup {
+        @apply absolute font-bold text-2xl text-yellow-400 pointer-events-none z-50;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 0, 0.5);
+        animation: scoreFloat 1s ease-out forwards;
+    }
+
+    @keyframes scoreFloat {
+        0% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+        }
+
+        20% {
+            transform: translate(-50%, -70%) scale(1.1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translate(-50%, -120%) scale(1);
+            opacity: 0;
+        }
+    }
 }
 
 /* ============================================================= */
 /* ==================== OPTIONAL COMPONENT ==================== */
 /* ============================================================= */
 @layer components {
-  .sprite {
-    @apply absolute bg-contain bg-center bg-no-repeat pixelated;
-  }
+    .sprite {
+        @apply absolute bg-contain bg-center bg-no-repeat pixelated;
+    }
 }
 
 /* ============================================================= */
@@ -156,48 +269,48 @@
     width: 12px;
     height: 12px;
     animation: bubbleFloat 6s linear forwards;
-  }
-  
-  .bubble.big {
+}
+
+.bubble.big {
     width: 20px;
     height: 20px;
-  }
-  
-  .bubble.small {
+}
+
+.bubble.small {
     width: 8px;
     height: 8px;
-  }
+}
 
-  /* ---------- ARCADE HIGH SCORE STYLING ---------- */
-  .arcade-title {
+/* ---------- ARCADE HIGH SCORE STYLING ---------- */
+.arcade-title {
     @apply text-xl md:text-2xl font-pressstart;
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
     letter-spacing: 2px;
-  }
+}
 
-  .arcade-divider {
+.arcade-divider {
     @apply mx-auto;
     width: 80%;
     height: 2px;
     background: linear-gradient(to right, transparent, #888, transparent);
     margin-top: 4px;
     margin-bottom: 4px;
-  }
+}
 
-  .arcade-subtitle {
+.arcade-subtitle {
     @apply text-sm md:text-base font-pressstart;
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.8);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
     letter-spacing: 1px;
-  }
+}
 
-  .arcade-score-list {
+.arcade-score-list {
     @apply space-y-1;
     list-style: none;
     padding: 0;
     margin: 0;
-  }
+}
 
-  .arcade-score-item {
+.arcade-score-item {
     @apply font-pressstart text-xs md:text-sm;
     display: flex;
     align-items: center;
@@ -205,25 +318,275 @@
     gap: 8px;
     padding: 2px 0;
     text-align: center;
-  }
+}
 
-  .arcade-score-item .score-rank {
+.arcade-score-item .score-rank {
     @apply text-cyan-300;
     min-width: 20px;
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.8);
-  }
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}
 
-  .arcade-score-item .score-value {
+.arcade-score-item .score-value {
     @apply text-red-500;
     font-weight: bold;
     min-width: 80px;
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.8);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
     letter-spacing: 1px;
-  }
+}
 
-  .arcade-score-item .score-initials {
+.arcade-score-item .score-initials {
     @apply text-cyan-300;
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.8);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
     letter-spacing: 2px;
-  }
-  
+}
+
+/* ============================================================= */
+
+/* ==================== TILEMAP SYSTEM ========================= */
+
+/* ============================================================= */
+
+
+
+/* Base tile styling */
+
+.tile {
+
+    @apply absolute pointer-events-none;
+
+    box-sizing: border-box;
+
+    transition: opacity 0.2s;
+
+    will-change: opacity;
+
+    backface-visibility: hidden;
+
+}
+
+
+
+/* Tile animations */
+
+@keyframes bubble-float {
+
+    0%,
+    100% {
+
+        transform: translateY(0);
+
+        opacity: 0.6;
+
+    }
+
+    50% {
+
+        transform: translateY(-5px);
+
+        opacity: 0.8;
+
+    }
+
+}
+
+
+
+/* Tile Type 1: Light Water */
+
+.tile-water-light {
+
+    background: linear-gradient(135deg,
+
+            rgba(100, 200, 255, 0.3) 0%,
+
+            rgba(150, 220, 255, 0.2) 100%);
+
+}
+
+
+
+/* Tile Type 2: Dark Water */
+
+.tile-water-dark {
+
+    background: linear-gradient(135deg,
+
+            rgba(30, 80, 150, 0.5) 0%,
+
+            rgba(40, 100, 180, 0.4) 100%);
+
+}
+
+
+
+/* Tile Type 3: Sand */
+
+.tile-sand {
+
+    background: linear-gradient(135deg,
+
+            #f4d190 0%,
+
+            #e8c070 50%,
+
+            #d4a860 100%);
+
+    border-top: 1px solid rgba(255, 230, 150, 0.5);
+
+}
+
+
+
+/* Tile Type 4: Rock */
+
+.tile-rock {
+
+    background: linear-gradient(135deg,
+
+            #6b7280 0%,
+
+            #4b5563 50%,
+
+            #374151 100%);
+
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+}
+
+
+
+/* Tile Type 5: Coral (Orange) */
+
+.tile-coral {
+
+    background: radial-gradient(circle at 30% 30%,
+
+            #ff8c42 0%,
+
+            #ff6b35 40%,
+
+            #d94a1a 100%);
+
+    border-radius: 8px;
+
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+}
+
+
+
+/* Tile Type 6: Seaweed */
+
+.tile-seaweed {
+
+    background: linear-gradient(180deg,
+
+            rgba(34, 139, 34, 0.4) 0%,
+
+            rgba(46, 125, 50, 0.6) 50%,
+
+            rgba(27, 94, 32, 0.8) 100%);
+
+    border-left: 2px solid rgba(76, 175, 80, 0.6);
+
+    border-right: 2px solid rgba(76, 175, 80, 0.4);
+
+}
+
+
+
+/* Tile Type 7: Dark Rock */
+
+.tile-rock-dark {
+
+    background: linear-gradient(135deg,
+
+            #3f3f3f 0%,
+
+            #2d2d2d 50%,
+
+            #1a1a1a 100%);
+
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.5);
+
+}
+
+
+
+/* Tile Type 8: Dark Sand */
+
+.tile-sand-dark {
+
+    background: linear-gradient(135deg,
+
+            #a89968 0%,
+
+            #8a7a50 50%,
+
+            #6b5d3f 100%);
+
+    border-top: 1px solid rgba(150, 130, 80, 0.4);
+
+}
+
+
+
+/* Tile Type 9: Coral (Pink) */
+
+.tile-coral-pink {
+
+    background: radial-gradient(circle at 30% 30%,
+
+            #ff6b9d 0%,
+
+            #f06292 40%,
+
+            #e91e63 100%);
+
+    border-radius: 8px;
+
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+}
+
+
+
+/* Tile Type 10: Bubble Area */
+
+.tile-bubble {
+
+    background: radial-gradient(circle at 50% 50%,
+
+            rgba(200, 230, 255, 0.3) 0%,
+
+            rgba(150, 200, 255, 0.15) 60%,
+
+            rgba(100, 180, 255, 0.05) 100%);
+
+    animation: bubble-float 3s ease-in-out infinite;
+
+}
+
+
+
+/* Default tile (fallback) */
+
+.tile-default {
+
+    background: rgba(100, 100, 100, 0.3);
+
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+
+}
+
+
+
+/* Tilemap container */
+
+#tilemap-layer {
+
+    @apply absolute inset-0 w-full h-full pointer-events-none;
+
+    z-index: 1;
+
+}

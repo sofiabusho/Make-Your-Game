@@ -6,6 +6,7 @@ Fast-paced, pointer-driven aquarium target game built with plain JavaScript modu
 - Chain catches to build combos, boost the score multiplier, and chase the local high-score table.
 - Catch the rare red life fish for extra lives and dodge the turtle hazards that break combos and drain points.
 - Levels advance on a fixed timer; spawn rates, fish variants, and difficulty scale with each stage.
+- This project includes a custom tilemap engine that renders grid-based tile maps for the underwater game. The engine efficiently manages tile rendering using a single tileset approach and supports multiple unique maps.
 
 ## 🧩 System Highlights
 ### Game Loop & Lifecycle (`src/core/gameLoop.js`, `src/core/lifecycle.js`)
@@ -35,22 +36,7 @@ Fast-paced, pointer-driven aquarium target game built with plain JavaScript modu
 
 ## 📁 Folder Structure
 ```text
-.
-├── index.html            # Static shell: layered tank DOM, HUD, overlays
-├── main.js               # Entry point wiring every system together
-├── style                 # All CSS plus theme-specific images
-│   ├── styles.css        # Core gameplay layout and HUD styling
-│   ├── menu.css          # Start/pause/story overlay presentation
-│   └── images            # Backgrounds, coral layers, decorative sprites for CSS
-├── src
-│   ├── core              # Game loop, lifecycle, input, settings, constants
-│   ├── entities          # DOM helpers plus LifeFish & Turtle managers
-│   ├── gameplay          # Spawning logic and shooting/combat rules
-│   ├── ui                # HUD, feedback, high-score persistence, menu FX
-│   └── story             # Narrative overlay controller
-├── docs                  # Specs, feature logs, UX notes shared by the team
-├── images                # Sprite sheets referenced directly by JS (fish, turtle, etc.)
-└── LICENSE               # MIT terms applied to the entire repository
+
 ```
 
 Key module responsibilities:
