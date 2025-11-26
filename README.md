@@ -22,6 +22,17 @@ Fast-paced, pointer-driven aquarium target game built with plain JavaScript modu
 - Mouse movement instantly drives the crosshair via `translate3d` for GPU compositing; `crosshairLoop` is a dedicated `requestAnimationFrame` that handles keyboard navigation independent of the main loop for minimal latency.
 - Shooting is rate-limited (`SHOT_RATE_LIMIT_MS`) and normalized to game-space coordinates so future camera changes stay localized.
 
+### Tile Map System (`src/tilemap/*`)
+- **Automatic Initialization**: The tile map system initializes when the game starts. It generates a tileset from programmatically created colored tiles, loads the first map (Ocean Floor pattern), and renders tiles behind game entities.
+- **Automatic Map Switching**: Maps automatically change based on level:
+  - **Level 1**: Ocean Floor Map (repeating pattern)
+  - **Level 2**: Checkerboard Map (alternating pattern)
+  - **Level 3**: Coral Reef Map (organic clusters)
+  - **Level 4**: Striped Map (horizontal/vertical stripes)
+  - **Level 5+**: Cycles back through maps
+- **Performance Optimization**: Only visible tiles are rendered (viewport culling), tiles are cached in DOM for efficient updates, and viewport automatically updates on window resize.
+- **Toggle Visibility**: Players can toggle tile map visibility using the 🌊 button in the HUD to view the underlying tile patterns at 15% opacity.
+
 ### HUD, Feedback, and Meta UI (`src/ui/*`, `src/story/story.js`, `index.html`)
 - `createHudSystem` mirrors runtime stats in both the floating HUD and pause menu, including heart indicators and low-time styling.
 - `createFeedbackSystem` handles combo banners, score popups, center notifications, and the Game Over overlay. High scores persist through `localStorage` (`src/ui/highScores.js`).
@@ -74,6 +85,10 @@ Fast-paced, pointer-driven aquarium target game built with plain JavaScript modu
 │   │   └── scoreboard.js
 │   ├── story             # Narrative overlay controller
 │   │   └── story.js
+│   ├── tilemap           # Tile map system for background rendering
+│   │   ├── maps.js       # Map definitions and generation algorithms
+│   │   ├── tilemap.js    # Tile map renderer with viewport culling
+│   │   └── tilesetGenerator.js  # Programmatic tileset generation
 │   └── input.css         # Tailwind CSS input file
 ├── docs                  # Specs, feature logs, UX notes shared by the team
 │   └── structure.md
@@ -102,6 +117,9 @@ Key module responsibilities:
 - `src/core/lifecycle.js` – Start/pause/resume orchestration and resets.
 - `src/gameplay/spawning.js` – Fish/bubble creation and world placement.
 - `src/gameplay/shooting.js` – Shot handling, combos, penalties, and capture animations.
+- `src/tilemap/maps.js` – Tile map definitions with programmatic generation algorithms.
+- `src/tilemap/tilemap.js` – Tile map renderer with viewport culling and efficient DOM management.
+- `src/tilemap/tilesetGenerator.js` – Programmatic tileset generation using Canvas API.
 - `src/ui/hud.js` – Scoreboard rendering for HUD and pause stats.
 - `src/ui/feedback.js` – Combo messaging, popups, and Game Over flow.
 - `src/ui/scoreboard.js` – Global scoreboard and game history viewer with pagination and rank highlighting.

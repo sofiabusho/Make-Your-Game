@@ -152,7 +152,6 @@ export function createFeedbackSystem({
 
    function showCenterNotification(message, type = '', duration = 2000) {
        if (!centerNotification) {
-           console.warn('centerNotification element not found');
            return;
        }
 
@@ -226,7 +225,6 @@ export function createFeedbackSystem({
                    showScoreboard({ recentSubmission });
                })
                .catch((error) => {
-                   console.error('Failed to submit score to server:', error);
                    // Preserve offline fallback silently when API isn't reachable.
                    // But log it so we can debug
                });

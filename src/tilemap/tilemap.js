@@ -117,7 +117,6 @@ export class TileMapRenderer {
             return;
         }
         if (!this.tilesetImage) {
-            console.warn('TileMapRenderer: No tileset image');
             return;
         }
         if (!this.tilesetImage.complete) {
@@ -135,18 +134,10 @@ export class TileMapRenderer {
         const startRow = Math.max(0, Math.floor(this.viewport.y / tileSize));
         const endRow = Math.min(map.rows, Math.ceil((this.viewport.y + this.viewport.height) / tileSize));
         
-        // Only log on first render or when viewport changes significantly
+        // Track viewport changes
         if (!this._lastViewport || 
             Math.abs(this._lastViewport.width - this.viewport.width) > 10 ||
             Math.abs(this._lastViewport.height - this.viewport.height) > 10) {
-            console.log('TileMapRenderer: Rendering tiles', {
-                viewport: this.viewport,
-                tileSize,
-                mapSize: { columns: map.columns, rows: map.rows },
-                visibleRange: { startCol, endCol, startRow, endRow },
-                expectedTiles: (endCol - startCol) * (endRow - startRow),
-                tilesetSrc: this.tilesetImage.src?.substring(0, 50) + '...'
-            });
             this._lastViewport = { ...this.viewport };
         }
 
@@ -198,7 +189,6 @@ export class TileMapRenderer {
                 // Use the tileset image source (should be a data URL for programmatically generated tiles)
                 const tilesetSrc = this.tilesetImage.src;
                 if (!tilesetSrc) {
-                    console.error('Tileset image has no src!', this.tilesetImage);
                     continue;
                 }
                 // Escape the data URL properly for CSS
@@ -261,13 +251,11 @@ export class TileMapRenderer {
             this.tileElements.delete(key);
         });
         
-        // Only log on first render or significant changes
+        // Track render state
         if (!this._hasLoggedInitialRender) {
-            console.log(`TileMapRenderer: Initial render complete - ${tilesCreated} tiles visible, ${this.container.children.length} total in DOM`);
             this._hasLoggedInitialRender = true;
             this._lastTileCount = this.container.children.length;
         } else if (tilesCreated > 50 && Math.abs(this._lastTileCount - this.container.children.length) > 20) {
-            console.log(`TileMapRenderer: Significant change - ${tilesCreated} tiles visible, ${this.container.children.length} total`);
             this._lastTileCount = this.container.children.length;
         }
     }

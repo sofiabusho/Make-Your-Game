@@ -114,16 +114,9 @@ function createSolidColorTileset(tileSize = 64) {
         // Convert canvas to image
         const tilesetImage = new Image();
         tilesetImage.onload = () => {
-            console.log('Solid colored tileset generated successfully', {
-                width: tilesetImage.width,
-                height: tilesetImage.height,
-                colors: colors.length,
-                srcLength: tilesetImage.src.length
-            });
             resolve(tilesetImage);
         };
-        tilesetImage.onerror = (error) => {
-            console.error('Failed to load tileset image:', error);
+        tilesetImage.onerror = () => {
             reject(new Error('Failed to create tileset image from canvas'));
         };
         // Data URLs cannot have query parameters - remove the timestamp

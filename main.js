@@ -184,7 +184,6 @@ function bootstrapGame() {
         menuMusic.volume = Math.max(0, Math.min(1, volume * 0.75));
       }, 400);
     } catch (e) {
-      console.warn('[menuMusic] autoplay blocked:', e);
       window.addEventListener('pointerdown', () => {
         try {
           menuMusic.muted = false;
@@ -317,19 +316,12 @@ function bootstrapGame() {
       }
       
       // Generate tileset programmatically (solid colored tiles)
-      console.log('Generating solid colored tileset...');
       const tilesetImage = await createGameTileset(TILE_SIZE);
       
       // Verify tileset was created
       if (!tilesetImage || tilesetImage.width === 0) {
         throw new Error('Failed to generate tileset image');
       }
-      
-      console.log('Tileset generated:', {
-        width: tilesetImage.width,
-        height: tilesetImage.height,
-        src: tilesetImage.src.substring(0, 50) + '...'
-      });
       
       // Create tile map renderer
       tileMapRenderer = new TileMapRenderer(
@@ -341,45 +333,13 @@ function bootstrapGame() {
       
       // Set initial viewport to match world size
       tileMapRenderer.setViewport(0, 0, WORLD.width, WORLD.height);
-      console.log('Viewport set:', { width: WORLD.width, height: WORLD.height });
       
       // Load and set the first map
       currentMapIndex = 0;
       const initialMap = getMapByIndex(currentMapIndex);
-      console.log('Setting map:', { columns: initialMap.columns, rows: initialMap.rows, tileCount: initialMap.tiles.length });
       tileMapRenderer.setMap(initialMap);
-      
-      // Debug: Check if tiles were created
-      setTimeout(() => {
-        const tileCount = tilemapLayer.children.length;
-        console.log('Tile map system initialized successfully with solid colored tiles');
-        console.log(`Tiles rendered: ${tileCount}`, {
-          mapColumns: initialMap.columns,
-          mapRows: initialMap.rows,
-          tileSize: TILE_SIZE,
-          viewport: { width: WORLD.width, height: WORLD.height },
-          containerChildren: tilemapLayer.children.length
-        });
-        
-        // Log first few tiles for debugging
-        if (tileCount > 0) {
-          const firstTile = tilemapLayer.children[0];
-          console.log('First tile styles:', {
-            left: firstTile.style.left,
-            top: firstTile.style.top,
-            width: firstTile.style.width,
-            height: firstTile.style.height,
-            backgroundImage: firstTile.style.backgroundImage?.substring(0, 50),
-            opacity: firstTile.style.opacity,
-            display: firstTile.style.display,
-            zIndex: firstTile.style.zIndex
-          });
-        } else {
-          console.warn('No tiles were rendered! Check viewport and map dimensions.');
-        }
-      }, 100);
     } catch (error) {
-      console.error('Failed to initialize tile map system:', error);
+      // Failed to initialize tile map system
     }
   }
   
@@ -679,7 +639,6 @@ function bootstrapGame() {
       openBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Popup button clicked:', openBtn.id);
         popup.classList.remove('hidden');
         playButtonSound();
         // Re-apply settings to UI when settings popup is opened
@@ -687,8 +646,6 @@ function bootstrapGame() {
           applySettingsToUI();
         }
       });
-    } else {
-      console.warn('Popup setup failed:', { openBtn: !!openBtn, popup: !!popup });
     }
 
     if (closeBtn && popup) {
@@ -760,15 +717,12 @@ function bootstrapGame() {
     startBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Start button clicked');
       stopMenuMusic();
       resetGoSfx();
       startOverlay.classList.add('hidden');
       attachDefaultStoryCallbacks();
       storyManager.showIntroduction();
     });
-  } else {
-    console.error('Start button not found!');
   }
 
 
