@@ -1,6 +1,6 @@
 // src/core/settings.js
-// v5: Default sound enabled (on) - always defaults to true
-const LS_KEY = 'fth_settings_v5';
+// v6: Default sound enabled (on) - always defaults to true on first load
+const LS_KEY = 'fth_settings_v6';
 
 export function createSettingsHandlers({
   getSoundEnabled,
@@ -13,7 +13,7 @@ export function createSettingsHandlers({
   function loadSettings() {
     try {
       // Clear old settings keys to ensure fresh start with new default
-      ['fth_settings_v1', 'fth_settings_v2', 'fth_settings_v3', 'fth_settings_v4'].forEach(key => {
+      ['fth_settings_v1', 'fth_settings_v2', 'fth_settings_v3', 'fth_settings_v4', 'fth_settings_v5'].forEach(key => {
         try {
           localStorage.removeItem(key);
         } catch (_) {}
@@ -22,20 +22,22 @@ export function createSettingsHandlers({
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
         const obj = JSON.parse(raw);
-        // Load saved settings - respect user's explicit choice
+        // Load saved settings - respect user's explicit choice if they've set it
         if (typeof obj.soundEnabled === 'boolean') {
           setSoundEnabled(obj.soundEnabled);
         } else {
-          // If soundEnabled is not a boolean, default to true
+          // If soundEnabled is not a boolean, default to true (ON)
           setSoundEnabled(true);
         }
         if (typeof obj.volume === 'number') setVolume(clamp01(obj.volume));
       } else {
-        // Default to sound enabled (on) when no saved settings exist
+        // Default to sound enabled (ON) when no saved settings exist (first load)
         setSoundEnabled(true);
         // Also ensure the checkbox is checked in HTML
         if (soundToggle) {
           soundToggle.checked = true;
+          soundToggle.setAttribute('checked', '');
+          soundToggle.setAttribute('aria-checked', 'true');
         }
       }
     } catch (_) { 

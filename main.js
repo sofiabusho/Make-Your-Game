@@ -677,9 +677,23 @@ function bootstrapGame() {
   setupPopup(settingsBtn, settingsPopup, closeSettings);
   setupPopup(creditsBtn, creditsPopup, closeCredits);
 
-  // Init
+  // Init - load settings (defaults to ON if no saved preference)
   loadSettings();
   applySettingsToUI();
+  
+  // Ensure sound toggle checkbox state matches soundEnabled value
+  // Force update the checkbox to ensure it reflects the current state
+  if (soundToggle) {
+    const currentState = soundEnabled;
+    soundToggle.checked = currentState;
+    if (currentState) {
+      soundToggle.setAttribute('checked', '');
+      soundToggle.setAttribute('aria-checked', 'true');
+    } else {
+      soundToggle.removeAttribute('checked');
+      soundToggle.setAttribute('aria-checked', 'false');
+    }
+  }
   updateHighScoreListUI();
   initEnhancedMenu();
 
@@ -730,6 +744,7 @@ function bootstrapGame() {
   if (soundToggle) {
     soundToggle.addEventListener('change', () => {
       soundEnabled = !!soundToggle.checked;
+      // Save the user's preference so it persists
       saveSettings();
 
       try {
