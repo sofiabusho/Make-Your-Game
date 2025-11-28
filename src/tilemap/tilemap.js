@@ -15,7 +15,7 @@
  */
 export function createMap(columns, rows, tiles) {
     const size = columns * rows;
-    
+
     return {
         columns,
         rows,
@@ -65,6 +65,7 @@ export class TileMapRenderer {
         this.currentMap = null;
         this.tileElements = new Map(); // Cache of DOM elements for each tile position
         this.viewport = { x: 0, y: 0, width: 0, height: 0 };
+        this.mapDepthLevel = 0; // 0 = transparent, 1 = light, 2 = medium, 3 = dark
     }
 
     /**
@@ -73,8 +74,12 @@ export class TileMapRenderer {
      */
     setMap(map) {
         this.currentMap = map;
+        this.mapDepthLevel = depthLevel;
         this.clear();
         this.render();
+
+        const depthNames = ['Transparent', 'Light Depth', 'Medium Depth', 'Deep Waters'];
+        console.log(`[Tilemap] Loaded map: ${map.name || 'Map'} (${depthNames[depthLevel]})`);
     }
 
     /**
@@ -85,14 +90,7 @@ export class TileMapRenderer {
      * @param {number} height - Viewport height
      */
     setViewport(x, y, width, height) {
-        const oldViewport = this.viewport.width ? { ...this.viewport } : null;
         this.viewport = { x, y, width, height };
-        // Only re-render if viewport changed significantly (to avoid spam)
-        if (!oldViewport || 
-            Math.abs(oldViewport.width - width) > 10 || 
-            Math.abs(oldViewport.height - height) > 10) {
-            this.render();
-        }
     }
 
     /**
@@ -116,50 +114,25 @@ export class TileMapRenderer {
             // Don't log warning - this is normal during initialization
             return;
         }
-        if (!this.tilesetImage) {
-            return;
-        }
-        if (!this.tilesetImage.complete) {
-            // Don't log warning - image is still loading
-            return;
-        }
+        if (!this.tilesetImage || !this.tilesetImage.complete) return;
 
         const map = this.currentMap;
         const tileSize = this.tileSize;
-        
+
         // Calculate visible tile range based on viewport
         // Don't add extra tiles outside viewport to prevent artifacts
         const startCol = Math.max(0, Math.floor(this.viewport.x / tileSize));
         const endCol = Math.min(map.columns, Math.ceil((this.viewport.x + this.viewport.width) / tileSize));
         const startRow = Math.max(0, Math.floor(this.viewport.y / tileSize));
         const endRow = Math.min(map.rows, Math.ceil((this.viewport.y + this.viewport.height) / tileSize));
-        
-        // Track viewport changes
-        if (!this._lastViewport || 
-            Math.abs(this._lastViewport.width - this.viewport.width) > 10 ||
-            Math.abs(this._lastViewport.height - this.viewport.height) > 10) {
-            this._lastViewport = { ...this.viewport };
-        }
 
         // Render only visible tiles
-        let tilesCreated = 0;
         for (let row = startRow; row < endRow; row++) {
             for (let col = startCol; col < endCol; col++) {
                 const tileId = map.getTile(col, row);
-                if (tileId === 0) continue; // Skip empty tiles
-                
-                // Calculate tile position
-                const tileLeft = col * tileSize;
-                const tileTop = row * tileSize;
-                
-                // Only render tiles that are at least partially visible
-                if (tileLeft + tileSize < 0 || tileLeft > this.viewport.width ||
-                    tileTop + tileSize < 0 || tileTop > this.viewport.height) {
-                    // Tile is completely outside viewport, skip creating it
-                    continue;
-                }
-                
-                tilesCreated++;
+
+                // Skip empty tiles only (0)
+                if (tileId === 0) continue;
 
                 const key = `${col},${row}`;
                 let tileElement = this.tileElements.get(key);
@@ -172,100 +145,106 @@ export class TileMapRenderer {
                     tileElement.style.width = `${tileSize}px`;
                     tileElement.style.height = `${tileSize}px`;
                     tileElement.style.imageRendering = 'pixelated';
-                    tileElement.style.imageRendering = '-moz-crisp-edges';
-                    tileElement.style.imageRendering = 'crisp-edges';
+                    tileElement.style.pointerEvents = 'none';
                     this.container.appendChild(tileElement);
                     this.tileElements.set(key, tileElement);
                 }
 
-                // Calculate source position in tileset
-                const tilesetCol = (tileId - 1) % this.tilesPerRow;
-                const tilesetRow = Math.floor((tileId - 1) / this.tilesPerRow);
-                const sourceX = tilesetCol * tileSize;
-                const sourceY = tilesetRow * tileSize;
-                
+                // Position tile
+                const tileLeft = col * tileSize;
+                const tileTop = row * tileSize;
                 tileElement.style.left = `${tileLeft}px`;
                 tileElement.style.top = `${tileTop}px`;
-                // Use the tileset image source (should be a data URL for programmatically generated tiles)
-                const tilesetSrc = this.tilesetImage.src;
-                if (!tilesetSrc) {
-                    continue;
-                }
-                // Escape the data URL properly for CSS
-                tileElement.style.backgroundImage = `url("${tilesetSrc}")`;
-                tileElement.style.backgroundPosition = `-${sourceX}px -${sourceY}px`;
-                // Background size should match the full tileset dimensions
-                const tilesetRows = Math.ceil(6 / this.tilesPerRow); // 6 colors total
-                tileElement.style.backgroundSize = `${this.tilesPerRow * tileSize}px ${tilesetRows * tileSize}px`;
-                tileElement.style.backgroundRepeat = 'no-repeat';
-                tileElement.style.opacity = '0.5'; // Make tiles semi-transparent so they don't cover game
-                tileElement.style.zIndex = '0';
-                // Ensure tiles are visible
+
+                // Apply depth-based styling
+                this.applyDepthStyle(tileElement, tileId);
+
                 tileElement.style.display = 'block';
-                tileElement.style.visibility = 'visible';
-                // Remove border - tiles should be subtle background
-                tileElement.style.border = 'none';
-                tileElement.style.boxSizing = 'border-box';
-                // Force repaint and hardware acceleration
-                tileElement.style.transform = 'translateZ(0)';
-                tileElement.style.willChange = 'transform';
-                // Ensure tile is above background but below entities
-                tileElement.style.pointerEvents = 'none';
             }
         }
 
-        // Remove or hide tiles that are outside the viewport completely
-        const tilesToRemove = [];
+        // Clean up tiles outside viewport
         this.tileElements.forEach((element, key) => {
             const [col, row] = key.split(',').map(Number);
-            const tileLeft = col * tileSize;
-            const tileTop = row * tileSize;
-            
-            // Check if tile is completely outside viewport (with some margin)
-            if (col < startCol || col >= endCol || row < startRow || row >= endRow ||
-                tileLeft + tileSize < -tileSize || tileLeft > this.viewport.width + tileSize ||
-                tileTop + tileSize < -tileSize || tileTop > this.viewport.height + tileSize) {
-                // Tile is outside viewport - hide it
-                element.style.display = 'none';
-                element.style.opacity = '0';
-                element.style.visibility = 'hidden';
-                // Optionally remove from DOM if it's far outside (to prevent memory issues)
-                if (tileLeft < -tileSize * 2 || tileLeft > this.viewport.width + tileSize * 2 ||
-                    tileTop < -tileSize * 2 || tileTop > this.viewport.height + tileSize * 2) {
-                    tilesToRemove.push(key);
+            if (col < startCol || col >= endCol || row < startRow || row >= endRow) {
+                if (element.parentNode) {
+                    element.parentNode.removeChild(element);
                 }
-            } else {
-                // Tile is visible
-                element.style.display = 'block';
-                element.style.opacity = '1';
-                element.style.visibility = 'visible';
+                this.tileElements.delete(key);
             }
         });
-        
-        // Remove tiles that are very far outside viewport
-        tilesToRemove.forEach(key => {
-            const element = this.tileElements.get(key);
-            if (element && element.parentNode) {
-                element.parentNode.removeChild(element);
-            }
-            this.tileElements.delete(key);
-        });
-        
-        // Track render state
-        if (!this._hasLoggedInitialRender) {
-            this._hasLoggedInitialRender = true;
-            this._lastTileCount = this.container.children.length;
-        } else if (tilesCreated > 50 && Math.abs(this._lastTileCount - this.container.children.length) > 20) {
-            this._lastTileCount = this.container.children.length;
-        }
     }
 
+
     /**
-     * Updates the render (useful for scrolling or viewport changes).
+     * Applies visual styling based on the map's depth level
      */
-    update() {
-        this.render();
+    applyDepthStyle(tileElement, tileId) {
+        // Calculate source position in tileset
+        const tilesetCol = (tileId - 1) % this.tilesPerRow;
+        const tilesetRow = Math.floor((tileId - 1) / this.tilesPerRow);
+        const sourceX = tilesetCol * this.tileSize;
+        const sourceY = tilesetRow * this.tileSize;
+
+        // Apply tileset image with background-position
+        tileElement.style.backgroundImage = `url("${this.tilesetImage.src}")`;
+        tileElement.style.backgroundPosition = `-${sourceX}px -${sourceY}px`;
+
+        const tilesetRows = Math.ceil(6 / this.tilesPerRow);
+        tileElement.style.backgroundSize = `${this.tilesPerRow * this.tileSize}px ${tilesetRows * this.tileSize}px`;
+        tileElement.style.backgroundRepeat = 'no-repeat';
+
+        // Apply depth-based tinting
+        switch (this.mapDepthLevel) {
+            case 0: // Map 1: Transparent (background shows through completely)
+                tileElement.style.opacity = '0';
+                tileElement.style.filter = 'none';
+                break;
+
+            case 1: // Map 2: Light blue tint (shallow water)
+                tileElement.style.opacity = '0.2';
+                tileElement.style.filter = 'sepia(0.3) hue-rotate(180deg) saturate(1.2) brightness(1.1)';
+                break;
+
+            case 2: // Map 3: Medium blue tint (mid-depth water)
+                tileElement.style.opacity = '0.35';
+                tileElement.style.filter = 'sepia(0.4) hue-rotate(190deg) saturate(1.4) brightness(0.9)';
+                break;
+
+            case 3: // Map 4: Dark blue tint (deep water)
+                tileElement.style.opacity = '0.5';
+                tileElement.style.filter = 'sepia(0.5) hue-rotate(200deg) saturate(1.6) brightness(0.7)';
+                break;
+
+            default:
+                tileElement.style.opacity = '0';
+                tileElement.style.filter = 'none';
+        }
     }
+    update() {
+        // This is called each frame but only re-renders if needed
+        // Viewport culling ensures performance
+    }
+}
+
+export function createMap(columns, rows, tiles) {
+    return {
+        columns,
+        rows,
+        size: columns * rows,
+        tiles,
+        getTile(col, row) {
+            if (col < 0 || col >= this.columns || row < 0 || row >= this.rows) {
+                return 0;
+            }
+            return this.tiles[row * this.columns + col] || 0;
+        },
+        setTile(col, row, tileId) {
+            if (col >= 0 && col < this.columns && row >= 0 && row < this.rows) {
+                this.tiles[row * this.columns + col] = tileId;
+            }
+        }
+    };
 }
 
 /**

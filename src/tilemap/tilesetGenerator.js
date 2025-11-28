@@ -69,12 +69,12 @@ function createSolidColorTileset(tileSize = 64) {
     return new Promise((resolve) => {
         const tilesPerRow = 3;
         const colors = [
-            { r: 0, g: 150, b: 255 },    // Very Bright Ocean Blue
-            { r: 180, g: 100, b: 50 },   // Rich Sandy Brown
-            { r: 0, g: 200, b: 0 },      // Very Vibrant Green
-            { r: 255, g: 50, b: 50 },    // Bright Red
-            { r: 255, g: 255, b: 0 },    // Bright Yellow
-            { r: 200, g: 0, b: 255 },   // Bright Purple
+            { r: 64, g: 164, b: 223, name: 'Light Water' },      // Tile 1: Light blue water
+            { r: 41, g: 128, b: 185, name: 'Deep Water' },       // Tile 2: Darker blue water
+            { r: 180, g: 100, b: 50, name: 'Sand' },             // Tile 3: Sandy brown
+            { r: 100, g: 100, b: 100, name: 'Rock' },            // Tile 4: Gray rock
+            { r: 255, g: 107, b: 53, name: 'Coral' },            // Tile 5: Orange coral
+            { r: 46, g: 125, b: 50, name: 'Seaweed' }            // Tile 6: Green seaweed
         ];
 
         const tilesetRows = Math.ceil(colors.length / tilesPerRow);

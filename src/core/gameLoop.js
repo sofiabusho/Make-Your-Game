@@ -101,20 +101,15 @@ export function createGameLoop({
                 state.setLevelTimer(constants.levelDuration);
                 lifeFishManager.resetForNewLevel();
                 turtleManager.resetForNewLevel();
-                
-                // Switch tile map based on level (cycle through available maps)
-                if (tileMapRenderer && getMapByIndex) {
-                    const renderer = tileMapRenderer();
-                    if (renderer) {
-                        const mapIndex = (newLevel - 1) % 4; // Cycle through 4 maps
-                        const newMap = getMapByIndex(mapIndex);
-                        renderer.setMap(newMap);
-                    }
+
+                // Switch tile map based on level
+                if (typeof loadMapForLevel === 'function') {
+                    loadMapForLevel(newLevel);
                 }
-                
+
                 feedback.showCenterNotification(`LEVEL ${newLevel}`, 'level-up', 2000);
             } else {
-                // Game ends after final level
+                // Game ends
                 state.setTimeLeft(0);
                 feedback.showGameOver();
                 return;
@@ -241,7 +236,7 @@ export function createGameLoop({
                 // The map will render when first set, and we can manually update when needed
             }
         }
-        
+
         // Render entities
         const entities = state.getEntities();
         for (let i = 0; i < entities.length; i++) {
