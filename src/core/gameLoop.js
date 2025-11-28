@@ -33,6 +33,7 @@ export function createGameLoop({
     storyManager,
     tileMapRenderer,
     getMapByIndex,
+    loadMapForLevel,
 }) {
     /**
      * Main update routine.

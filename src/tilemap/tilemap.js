@@ -227,25 +227,6 @@ export class TileMapRenderer {
     }
 }
 
-export function createMap(columns, rows, tiles) {
-    return {
-        columns,
-        rows,
-        size: columns * rows,
-        tiles,
-        getTile(col, row) {
-            if (col < 0 || col >= this.columns || row < 0 || row >= this.rows) {
-                return 0;
-            }
-            return this.tiles[row * this.columns + col] || 0;
-        },
-        setTile(col, row, tileId) {
-            if (col >= 0 && col < this.columns && row >= 0 && row < this.rows) {
-                this.tiles[row * this.columns + col] = tileId;
-            }
-        }
-    };
-}
 
 /**
  * Loads a tileset image and returns a promise that resolves when loaded.

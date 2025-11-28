@@ -507,6 +507,7 @@ function bootstrapGame() {
         storyManager,
         tileMapRenderer: () => tileMapRenderer, // Pass getter function
         getMapByIndex,
+        loadMapForLevel,
         state: {
             getEntities: () => entities,
             getTimeLeft: () => timeLeft,
